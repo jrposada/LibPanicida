@@ -1,0 +1,3 @@
+LibPanicida = {
+    name = 'LibPanicida'
+}

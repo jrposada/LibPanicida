@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "Lua.diagnostics.globals": [
+    "EVENT_MANAGER",
+    "EVENT_ADD_ON_LOADED",
+    "GuiRoot",
+    "WINDOW_MANAGER",
+    "CT_LABEL",
+    "ZO_Tooltips_ShowTextTooltip",
+    "ZO_Tooltips_HideTextTooltip",
+    "TOP",
+    "zo_callLater",
+    "d"
+  ],
+  "cSpell.words": ["Panicida"]
+}

@@ -1,16 +1,33 @@
 {
-  "editor.formatOnSave": true,
-  "Lua.diagnostics.globals": [
-    "EVENT_MANAGER",
-    "EVENT_ADD_ON_LOADED",
-    "GuiRoot",
-    "WINDOW_MANAGER",
-    "CT_LABEL",
-    "ZO_Tooltips_ShowTextTooltip",
-    "ZO_Tooltips_HideTextTooltip",
-    "TOP",
-    "zo_callLater",
-    "d"
-  ],
-  "cSpell.words": ["Panicida"]
+    "editor.formatOnSave": true,
+    "Lua.diagnostics.globals": [
+        "BSTATE_DISABLED",
+        "BSTATE_NORMAL",
+        "CHAT_SYSTEM",
+        "ClearTooltip",
+        "CT_LABEL",
+        "d",
+        "DT_HIGH",
+        "EVENT_MANAGER",
+        "GetDiffBetweenTimeStamps",
+        "GetTimeStamp",
+        "GetWorldName",
+        "GuiRoot",
+        "InformationTooltip",
+        "InitializeTooltip",
+        "LEFT",
+        "TOP",
+        "TOPLEFT",
+        "TOPRIGHT",
+        "WINDOW_MANAGER",
+        "ZO_ACTIVITY_FINDER_SORT_PRIORITY",
+        "ZO_Object",
+        "ZO_PreHookHandler",
+        "ZO_TOOLTIP_DEFAULT_COLOR",
+        "ZO_Tooltips_HideTextTooltip",
+        "ZO_Tooltips_ShowTextTooltip",
+    ],
+    "Lua.diagnostics.disable": [
+        "deprecated"
+    ]
 }

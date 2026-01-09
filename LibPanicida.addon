@@ -1,10 +1,10 @@
 ﻿## Title: Lib Panicida
 ## Description: Common utilities for my addons.
 ## Author: Panicida
-## APIVersion: 101041
-## AddOnVersion: 010000
 ## Version: 1.0.0
-## DependsOn: LibScroll 
+## APIVersion: 101048
+## IsLibrary: true
+## DependsOn: LibScroll
 
 ; DISCLAIMER:
 ;
@@ -18,5 +18,9 @@
 
 main.lua
 
-src/console.lua
-src/controls.lua
+src/infrastructure/constants.lua
+src/infrastructure/debug.lua
+src/utils/utils.lua
+src/utils/chat-message.lua
+src/ui/button.xml
+src/ui/controls.lua

@@ -67,7 +67,7 @@ function Controls.Label(name, parent, dims, anchor, font, color, align, text, hi
     return label
 end
 
-function Controls.Button(name, parent, dims, anchor, text, func, enabled, tooltip, hidden)
+function Controls.Button(name, parent, dims, anchor, text, func, enabled, tooltipLines, hidden)
     if not name or name == "" then return end
     if not ValidateAnchor(anchor) then return end
 
@@ -95,7 +95,7 @@ function Controls.Button(name, parent, dims, anchor, text, func, enabled, toolti
     button:SetDrawTier(DT_HIGH)
     button:SetHidden(hidden)
 
-    Controls.SetTooltip(button, tooltip)
+    Controls.SetTooltip(button, tooltipLines)
 
     return button
 end

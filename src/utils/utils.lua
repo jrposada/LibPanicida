@@ -65,15 +65,19 @@ function Utils.ParseTimeStamp(timeStamp)
     return string_format("%01d %02d:%02d:%02d", days, hours, mins, seconds)
 end
 
+function Utils.GetDailyRestBase()
+    return (GetWorldName() == "EU Megaserver")
+        and DAILY_RESET_BASE_EU
+        or DAILY_RESET_BASE_NA
+end
+
 -- Get the current daily reset day number
 -- @param timestamp: Optional timestamp (defaults to current time)
 -- @return: Day number since base reset timestamp
 function Utils.GetDailyResetDay(timestamp)
     timestamp = timestamp or GetTimeStamp()
 
-    local baseResetTimestamp = (GetWorldName() == "EU Megaserver")
-        and DAILY_RESET_BASE_EU
-        or DAILY_RESET_BASE_NA
+    local baseResetTimestamp = Utils.GetDailyRestBase()
 
     local secondsSinceBase = GetDiffBetweenTimeStamps(timestamp, baseResetTimestamp)
     return math_floor(secondsSinceBase / SECONDS_PER_DAY)

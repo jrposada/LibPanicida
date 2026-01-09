@@ -1,7 +1,7 @@
 <GuiXml>
     <Controls>
         <!-- Base Button -->
-        <Button name="GAFE_Button" font="ZoFontGameMedium" virtual="true" hidden="false">
+        <Button name="Panicida_Button" font="ZoFontGameMedium" virtual="true" hidden="false">
             <Dimensions x="32" y="32" />
 
             <Controls>

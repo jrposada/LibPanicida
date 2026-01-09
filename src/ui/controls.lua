@@ -72,7 +72,7 @@ function Controls.Button(name, parent, dims, anchor, text, func, enabled, toolti
     hidden = hidden or false
 
     local button = WM:GetControlByName(name) or
-        WM:CreateControlFromVirtual(name, parent, "GAFE_Button")
+        WM:CreateControlFromVirtual(name, parent, "Panicida_Button")
 
     if dims then
         button:SetDimensions(dims[1], dims[2])

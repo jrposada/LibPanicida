@@ -3,7 +3,15 @@ local GuiRoot = GuiRoot
 
 local Controls = {}
 
-local function SetTooltip(control, tooltipLines)
+
+
+local function ValidateAnchor(anchor)
+    if not anchor then return false end
+    local len = #anchor
+    return len == 4 or len == 5
+end
+
+function Controls.SetTooltip(control, tooltipLines)
     if not tooltipLines or #tooltipLines == 0 then
         control:SetHandler("OnMouseEnter", nil)
         control:SetHandler("OnMouseExit", nil)
@@ -20,12 +28,6 @@ local function SetTooltip(control, tooltipLines)
     control:SetHandler("OnMouseExit", function()
         ClearTooltip(InformationTooltip)
     end)
-end
-
-local function ValidateAnchor(anchor)
-    if not anchor then return false end
-    local len = #anchor
-    return len == 4 or len == 5
 end
 
 function Controls.Label(name, parent, dims, anchor, font, color, align, text, hidden, tooltipLines)
@@ -60,7 +62,7 @@ function Controls.Label(name, parent, dims, anchor, font, color, align, text, hi
     label:SetHidden(hidden)
     label:SetDrawTier(DT_HIGH)
 
-    SetTooltip(label, tooltipLines)
+    Controls.SetTooltip(label, tooltipLines)
 
     return label
 end
@@ -93,7 +95,7 @@ function Controls.Button(name, parent, dims, anchor, text, func, enabled, toolti
     button:SetDrawTier(DT_HIGH)
     button:SetHidden(hidden)
 
-    SetTooltip(button, tooltip)
+    Controls.SetTooltip(button, tooltip)
 
     return button
 end
@@ -130,6 +132,41 @@ function Controls.Checkbox(name, parent, dims, anchor, text, func, enabled, chec
     SetChecked(checked)
 
     return checkbox
+end
+
+-- Create a MultiIcon control (used for displaying multiple status icons)
+-- @param name: Unique name for the control
+-- @param parent: Parent control (nil defaults to GuiRoot)
+-- @param dims: Dimensions as {width, height}
+-- @param anchor: Anchor definition {point, relativeTo, relativePoint, offsetX, offsetY?}
+-- @param tooltipLines: Optional array of tooltip text lines
+-- @return: The created MultiIcon control
+function Controls.MultiIcon(name, parent, dims, anchor, tooltipLines)
+    -- Validate required parameters
+    if not name or name == "" then return end
+    if not ValidateAnchor(anchor) then return end
+
+    parent = parent or GuiRoot
+
+    local multiIcon = WM:GetControlByName(name) or
+        WM:CreateControlFromVirtual(name, parent, "ZO_MultiIcon")
+
+    if dims then
+        multiIcon:SetDimensions(dims[1], dims[2])
+    end
+
+    multiIcon:ClearAnchors()
+    if #anchor == 5 then
+        multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+    else
+        multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+    end
+
+    multiIcon:SetMouseEnabled(true)
+
+    Controls.SetTooltip(multiIcon, tooltipLines)
+
+    return multiIcon
 end
 
 LibPanicida.Controls = Controls

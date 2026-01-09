@@ -134,6 +134,39 @@ function Controls.Checkbox(name, parent, dims, anchor, text, func, enabled, chec
     return checkbox
 end
 
+-- Create a Texture control
+-- @param name: Unique name for the control
+-- @param parent: Parent control (nil defaults to GuiRoot)
+-- @param dims: Dimensions as {width, height}
+-- @param anchor: Anchor definition {point, relativeTo, relativePoint, offsetX, offsetY?}
+-- @param texture: Path to texture file (optional, can be set later)
+-- @return: The created Texture control
+function Controls.Texture(name, parent, dims, anchor, texture)
+    if not name or name == "" then return nil end
+    if not ValidateAnchor(anchor) then return nil end
+
+    parent = parent or GuiRoot
+
+    local control = WM:GetControlByName(name) or WM:CreateControl(name, parent, CT_TEXTURE)
+
+    if dims then
+        control:SetDimensions(dims[1], dims[2])
+    end
+
+    control:ClearAnchors()
+    if #anchor == 5 then
+        control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+    else
+        control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+    end
+
+    if texture then
+        control:SetTexture(texture)
+    end
+
+    return control
+end
+
 -- Create a MultiIcon control (used for displaying multiple status icons)
 -- @param name: Unique name for the control
 -- @param parent: Parent control (nil defaults to GuiRoot)

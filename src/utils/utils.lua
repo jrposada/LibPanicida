@@ -121,10 +121,10 @@ end
 -- Table Utilities
 -----------------------------------------------------------
 
--- Check if table contains a specific key
--- @param tbl: Table to search
--- @param key: Key to find
--- @return: true if key exists, false otherwise
+---Check if table contains a specific key
+---@param tbl any Table to search
+---@param key any Key to find
+---@return boolean true if key exists, false otherwise
 function Utils.TableContainsKey(tbl, key)
     if not tbl then return false end
     return tbl[key] ~= nil

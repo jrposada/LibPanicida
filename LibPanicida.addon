@@ -16,7 +16,7 @@
 ; You can read the full terms at:
 ; https://account.elderscrollsonline.com/add-on-terms
 
-main.lua
+src/main.lua
 
 src/infrastructure/constants.lua
 src/infrastructure/debug.lua

@@ -25,11 +25,11 @@ local Utils = {}
 -- Timing & Scheduling Utilities
 -----------------------------------------------------------
 
--- Schedule a function to run after a delay
--- @param name: Unique identifier for this scheduled call
--- @param ms: Delay in milliseconds (nil to cancel existing schedule)
--- @param func: Function to execute
--- @param ...: Optional arguments to pass to func
+--- Schedule a function to run after a delay.
+--- @param name string Unique identifier for this scheduled call
+--- @param ms number|nil Delay in milliseconds (nil to cancel existing schedule)
+--- @param func function Function to execute
+--- @param ... any Optional arguments to pass to func
 function Utils.CallLater(name, ms, func, ...)
     local eventName = "LibPanicida_CallLater_" .. name
 
@@ -47,9 +47,9 @@ function Utils.CallLater(name, ms, func, ...)
     end
 end
 
--- Parse timestamp into days, hours, minutes, seconds
--- @param timeStamp: Timestamp in seconds
--- @return: Formatted string "D HH:MM:SS"
+--- Parse timestamp into days, hours, minutes, seconds.
+--- @param timeStamp number Timestamp in seconds
+--- @return string Formatted string "D HH:MM:SS"
 function Utils.ParseTimeStamp(timeStamp)
     local seconds = timeStamp
 
@@ -65,19 +65,21 @@ function Utils.ParseTimeStamp(timeStamp)
     return string_format("%01d %02d:%02d:%02d", days, hours, mins, seconds)
 end
 
-function Utils.GetDailyRestBase()
+--- Get the base reset timestamp for the current server.
+--- @return number Base reset timestamp for EU or NA server
+function Utils.GetDailyResetBase()
     return (GetWorldName() == "EU Megaserver")
         and DAILY_RESET_BASE_EU
         or DAILY_RESET_BASE_NA
 end
 
--- Get the current daily reset day number
--- @param timestamp: Optional timestamp (defaults to current time)
--- @return: Day number since base reset timestamp
+--- Get the current daily reset day number.
+--- @param timestamp number|nil Optional timestamp (defaults to current time)
+--- @return number Day number since base reset timestamp
 function Utils.GetDailyResetDay(timestamp)
     timestamp = timestamp or GetTimeStamp()
 
-    local baseResetTimestamp = Utils.GetDailyRestBase()
+    local baseResetTimestamp = Utils.GetDailyResetBase()
 
     local secondsSinceBase = GetDiffBetweenTimeStamps(timestamp, baseResetTimestamp)
     return math_floor(secondsSinceBase / SECONDS_PER_DAY)
@@ -87,10 +89,11 @@ end
 -- String Utilities
 -----------------------------------------------------------
 
--- Split a string by delimiter
--- @param text: String to split
--- @param delimiter: Delimiter pattern (Lua pattern, not plain text)
--- @return: Array of substrings, count of substrings
+--- Split a string by delimiter.
+--- @param text string String to split
+--- @param delimiter string Delimiter pattern (Lua pattern, not plain text)
+--- @return table Array of substrings
+--- @return number Count of substrings
 function Utils.Split(text, delimiter)
     if not text or not delimiter then return {}, 0 end
 
@@ -108,10 +111,10 @@ function Utils.Split(text, delimiter)
     return result, count
 end
 
--- Clean pledge quest name by removing category prefix
--- Example: "Undaunted: Pledge - Fungal Grotto" -> "Fungal Grotto"
--- @param name: Full quest name
--- @return: Cleaned quest name
+--- Clean pledge quest name by removing category prefix.
+--- Example: "Undaunted: Pledge - Fungal Grotto" -> "Fungal Grotto"
+--- @param name string Full quest name
+--- @return string Cleaned quest name
 function Utils.CleanPledgeQuestName(name)
     if not name then return "" end
     return string_gsub(name, ".*:%s*", "")
@@ -121,19 +124,19 @@ end
 -- Table Utilities
 -----------------------------------------------------------
 
----Check if table contains a specific key
----@param tbl any Table to search
----@param key any Key to find
----@return boolean true if key exists, false otherwise
+--- Check if table contains a specific key.
+--- @param tbl table Table to search
+--- @param key any Key to find
+--- @return boolean True if key exists, false otherwise
 function Utils.TableContainsKey(tbl, key)
     if not tbl then return false end
     return tbl[key] ~= nil
 end
 
--- Check if table contains a specific value
--- @param tbl: Table to search
--- @param value: Value to find
--- @return: true if value exists, false otherwise
+--- Check if table contains a specific value.
+--- @param tbl table Table to search
+--- @param value any Value to find
+--- @return boolean True if value exists, false otherwise
 function Utils.TableContainsValue(tbl, value)
     if not tbl then return false end
 

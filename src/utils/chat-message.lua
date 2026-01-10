@@ -1,18 +1,38 @@
+-- Localized Globals
 local strlen = string.len
-local CS = CHAT_SYSTEM
+local CHAT_SYSTEM = CHAT_SYSTEM
+local ZO_Object = ZO_Object
 
+-- Constants
 local MAX_CHAT_MESSAGE_LENGTH = 1500
 local MSG_TOO_LONG = "Message was too long to submit"
 
-PanicidaChatMessage = ZO_Object:Subclass()
+-- Module Declaration
+local ChatMessage = ZO_Object:Subclass()
 
-function PanicidaChatMessage:New(prefix)
+-- Private Functions
+
+--- Adds a new entry to the message buffer.
+--- @param text string The text to add to buffer
+function ChatMessage:_AddBufferEntry(text)
+    self.bufferIndex = self.bufferIndex + 1
+    self.buffer[self.bufferIndex] = text
+end
+
+-- Public Functions
+
+--- Creates a new ChatMessage instance.
+--- @param prefix string Optional prefix for all messages
+--- @return table ChatMessage instance
+function ChatMessage:New(prefix)
     local instance = ZO_Object.New(self)
     instance:Initialize(prefix)
     return instance
 end
 
-function PanicidaChatMessage:Initialize(prefix)
+--- Initializes the ChatMessage instance.
+--- @param prefix string Optional prefix for all messages
+function ChatMessage:Initialize(prefix)
     self.prefix = prefix or ""
     self.maxCharacters = MAX_CHAT_MESSAGE_LENGTH
     self.buffer = {}
@@ -21,12 +41,9 @@ function PanicidaChatMessage:Initialize(prefix)
     self:_AddBufferEntry("")
 end
 
-function PanicidaChatMessage:_AddBufferEntry(text)
-    self.bufferIndex = self.bufferIndex + 1
-    self.buffer[self.bufferIndex] = text
-end
-
-function PanicidaChatMessage:AddMessage(message)
+--- Adds a message to the buffer, splitting across entries if needed.
+--- @param message string The message to add
+function ChatMessage:AddMessage(message)
     if not message or message == "" then return end
 
     local currentIndex = self.bufferIndex
@@ -46,7 +63,8 @@ function PanicidaChatMessage:AddMessage(message)
     end
 end
 
-function PanicidaChatMessage:Submit()
+--- Submits all buffered messages to chat and resets the buffer.
+function ChatMessage:Submit()
     if self.bufferIndex == 0 or (self.bufferIndex == 1 and self.buffer[1] == "") then
         return
     end
@@ -56,15 +74,19 @@ function PanicidaChatMessage:Submit()
     for i = 1, self.bufferIndex do
         local message = self.buffer[i]
         if message and message ~= "" then
-            CS:AddMessage(prefix .. message)
+            CHAT_SYSTEM:AddMessage(prefix .. message)
         end
     end
 
     self:Reset()
 end
 
-function PanicidaChatMessage:Reset()
+--- Resets the message buffer to initial state.
+function ChatMessage:Reset()
     self.buffer = {}
     self.bufferIndex = 0
     self:_AddBufferEntry("")
 end
+
+-- Module Registration
+LibPanicida.ChatMessage = ChatMessage

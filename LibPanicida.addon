@@ -18,7 +18,6 @@
 
 src/main.lua
 
-src/infrastructure/constants.lua
 src/infrastructure/debug.lua
 src/utils/utils.lua
 src/utils/chat-message.lua

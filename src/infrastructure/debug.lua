@@ -1,8 +1,5 @@
----@diagnostic disable: undefined-global
-
--- LibPanicida_Debug.lua
-
-local EM = EVENT_MANAGER
+-- Localized Globals
+local EVENT_MANAGER = EVENT_MANAGER
 local GuiRoot = GuiRoot
 local zo_callLater = zo_callLater
 local GetTimeStamp = GetTimeStamp
@@ -13,18 +10,16 @@ local ITEM_SET_COLLECTIONS_DATA_MANAGER = ITEM_SET_COLLECTIONS_DATA_MANAGER
 local GetAchievementInfo = GetAchievementInfo
 local ZO_PreHookHandler = ZO_PreHookHandler
 local ZO_PreHook = ZO_PreHook
+local SLASH_COMMANDS = SLASH_COMMANDS
+local EVENT_QUEST_REMOVED = EVENT_QUEST_REMOVED
 local pairs = pairs
+local ipairs = ipairs
+local tostring = tostring
 local string_format = string.format
 local tinsert = table.insert
 local d = d
 
-local Debug = {}
-
------------------------------------------------------------
--- State Management
------------------------------------------------------------
-
--- Track active debug features
+-- Constants
 local debugStates = {
     questLogging = false,
     setIdLogging = false,
@@ -34,26 +29,29 @@ local debugStates = {
 -- Store original functions for restoration
 local originalAchievementToggle = nil
 
------------------------------------------------------------
--- Private Helper Functions
------------------------------------------------------------
+-- Module Declaration
+local Debug = {}
 
--- Safe get control by name
+-- Private Functions
+
+--- Safely gets a control by name from global namespace.
+--- @param name string The control name to look up
+--- @return any|nil The control or nil if not found
 local function getControl(name)
     return name and _G[name] or nil
 end
 
------------------------------------------------------------
--- Control Inspection & Logging
------------------------------------------------------------
+-- Public Functions
 
--- Delayed logging for debugging
+--- Logs an object to chat after a delay.
+--- @param obj any The object to log
+--- @param delay? number Optional delay in milliseconds (defaults to 0)
 function Debug.LogLater(obj, delay)
-    zo_callLater(function() d(obj) end, delay)
+    zo_callLater(function() d(obj) end, delay or 0)
 end
 
--- Log when any top-level control is shown
--- WARNING: Very performance intensive - use only for debugging!
+--- Logs when any top-level control is shown.
+--- WARNING: Very performance intensive - use only for debugging!
 function Debug.EnableControlShownLogging()
     local numChildren = GuiRoot:GetNumChildren()
 
@@ -74,8 +72,8 @@ function Debug.EnableControlShownLogging()
     Debug.LogLater("Control shown logging enabled")
 end
 
--- Log all children of a control when shown
--- @param parent: Control to inspect
+--- Logs all children of a control when it is shown.
+--- @param parent any The control to inspect
 function Debug.LogControlChildren(parent)
     if not parent then return end
 
@@ -99,8 +97,8 @@ function Debug.LogControlChildren(parent)
     ZO_PreHookHandler(parent, "OnEffectivelyShown", logChildren)
 end
 
--- Log all children text of a control when shown
--- @param parent: Control to inspect
+--- Logs all children text of a control when it is shown.
+--- @param parent any The control to inspect
 function Debug.LogControlChildrenText(parent)
     if not parent then return end
 
@@ -131,9 +129,9 @@ function Debug.LogControlChildrenText(parent)
     ZO_PreHookHandler(parent, "OnEffectivelyShown", logChildrenText)
 end
 
--- Log all key-value pairs in a table
--- @param tbl: Table to log
--- @param name: Optional name for the table
+--- Logs all key-value pairs in a table.
+--- @param tbl table The table to log
+--- @param name string Optional name for the table
 function Debug.LogTable(tbl, name)
     if not tbl then
         Debug.LogLater("LogTable: table is nil")
@@ -149,11 +147,7 @@ function Debug.LogTable(tbl, name)
     end
 end
 
------------------------------------------------------------
--- Interactive Debugging Tools
------------------------------------------------------------
-
--- Log all fast travel node IDs and names
+--- Logs all fast travel node IDs and names.
 function Debug.LogFastTravelNodes()
     Debug.LogLater("=== Fast Travel Nodes ===")
 
@@ -168,10 +162,8 @@ function Debug.LogFastTravelNodes()
     Debug.LogLater(string_format("Total nodes: %d", numNodes))
 end
 
------------------------------------------------------------
--- Quest Logging
------------------------------------------------------------
-
+--- Enables quest completion/removal logging.
+--- @return boolean True if enabled, false if already enabled
 function Debug.EnableQuestLogging()
     if debugStates.questLogging then
         Debug.LogLater("Quest logging already enabled")
@@ -189,27 +181,27 @@ function Debug.EnableQuestLogging()
         end
     end
 
-    EM:RegisterForEvent(eventName, EVENT_QUEST_REMOVED, logQuest)
+    EVENT_MANAGER:RegisterForEvent(eventName, EVENT_QUEST_REMOVED, logQuest)
     debugStates.questLogging = true
     return true
 end
 
+--- Disables quest completion/removal logging.
+--- @return boolean True if disabled, false if already disabled
 function Debug.DisableQuestLogging()
     if not debugStates.questLogging then
         Debug.LogLater("Quest logging already disabled")
         return false
     end
 
-    EM:UnregisterForEvent("LibPanicida_QuestRemoved_Debug", EVENT_QUEST_REMOVED)
+    EVENT_MANAGER:UnregisterForEvent("LibPanicida_QuestRemoved_Debug", EVENT_QUEST_REMOVED)
     debugStates.questLogging = false
     Debug.LogLater("Quest logging disabled")
     return true
 end
 
------------------------------------------------------------
--- Set ID Logging
------------------------------------------------------------
-
+--- Enables set ID logging when clicking collection set headers.
+--- @return boolean True if enabled, false if already enabled
 function Debug.EnableSetIdLogging()
     if debugStates.setIdLogging then
         Debug.LogLater("Set ID logging already enabled")
@@ -239,20 +231,20 @@ function Debug.EnableSetIdLogging()
     return true
 end
 
+--- Disables set ID logging (requires UI reload).
+--- @return boolean Always returns true
 function Debug.DisableSetIdLogging()
     if not debugStates.setIdLogging then
         Debug.LogLater("Set ID logging already disabled")
         return false
     end
 
-    Debug.LogLater("Set ID logging can not be disabled. Reaload UI instead.")
+    Debug.LogLater("Set ID logging can not be disabled. Reload UI instead.")
     return true
 end
 
------------------------------------------------------------
--- Achievement Logging
------------------------------------------------------------
-
+--- Enables achievement ID logging when clicking achievements.
+--- @return boolean True if enabled, false if already enabled or not available
 function Debug.EnableAchievementIdLogging()
     if debugStates.achievementLogging then
         Debug.LogLater("Achievement ID logging already enabled")
@@ -284,6 +276,8 @@ function Debug.EnableAchievementIdLogging()
     return true
 end
 
+--- Disables achievement ID logging.
+--- @return boolean True if disabled, false if already disabled
 function Debug.DisableAchievementIdLogging()
     if not debugStates.achievementLogging then
         Debug.LogLater("Achievement ID logging already disabled")
@@ -299,6 +293,8 @@ function Debug.DisableAchievementIdLogging()
     return true
 end
 
+--- Toggles achievement ID logging on or off.
+--- @return boolean Result of enable or disable operation
 function Debug.ToggleAchievementIdLogging()
     if debugStates.achievementLogging then
         return Debug.DisableAchievementIdLogging()
@@ -307,11 +303,8 @@ function Debug.ToggleAchievementIdLogging()
     end
 end
 
------------------------------------------------------------
--- Utility Functions
------------------------------------------------------------
-
--- Get current state of all debug features
+--- Gets the current state of all debug features.
+--- @return table Table with feature states
 function Debug.GetStatus()
     return {
         questLogging = debugStates.questLogging,
@@ -320,7 +313,8 @@ function Debug.GetStatus()
     }
 end
 
--- Check if any debug feature is enabled
+--- Checks if any debug feature is currently enabled.
+--- @return boolean True if any feature is enabled
 function Debug.IsAnyEnabled()
     for _, enabled in pairs(debugStates) do
         if enabled then return true end
@@ -328,7 +322,7 @@ function Debug.IsAnyEnabled()
     return false
 end
 
--- Enable all debug features
+--- Enables all debug features.
 function Debug.EnableAll()
     Debug.EnableQuestLogging()
     Debug.EnableSetIdLogging()
@@ -336,7 +330,7 @@ function Debug.EnableAll()
     Debug.LogLater("All debug features enabled")
 end
 
--- Disable all debug features
+--- Disables all debug features.
 function Debug.DisableAll()
     Debug.DisableQuestLogging()
     Debug.DisableSetIdLogging()
@@ -344,11 +338,7 @@ function Debug.DisableAll()
     Debug.LogLater("All debug features disabled")
 end
 
------------------------------------------------------------
--- Slash Command Interface
------------------------------------------------------------
-
--- Show current status of all features
+--- Shows current status of all debug features.
 function Debug.ShowStatus()
     Debug.LogLater("=== LibPanicida Debug Status ===")
     local status = Debug.GetStatus()
@@ -366,7 +356,7 @@ function Debug.ShowStatus()
     end
 end
 
--- Show help message
+--- Shows help message for slash commands.
 function Debug.ShowHelp()
     Debug.LogLater("=== LibPanicida Debug Commands ===")
     Debug.LogLater("/lpd - Show current debug status")
@@ -384,7 +374,8 @@ function Debug.ShowHelp()
     Debug.LogLater("Aliases: quest/quests, set/sets, achieve/achievements")
 end
 
--- Handle enable command
+--- Handles enable command for a specific feature.
+--- @param feature string The feature to enable
 function Debug.HandleEnableCommand(feature)
     if not feature or feature == "all" then
         Debug.EnableAll()
@@ -400,7 +391,8 @@ function Debug.HandleEnableCommand(feature)
     end
 end
 
--- Handle disable command
+--- Handles disable command for a specific feature.
+--- @param feature string The feature to disable
 function Debug.HandleDisableCommand(feature)
     if not feature or feature == "all" then
         Debug.DisableAll()
@@ -416,7 +408,8 @@ function Debug.HandleDisableCommand(feature)
     end
 end
 
--- Main slash command handler
+--- Main slash command handler for /lpd.
+--- @param args string Command arguments
 function Debug.HandleSlashCommand(args)
     -- Trim and convert to lowercase
     args = args:gsub("^%s*(.-)%s*$", "%1"):lower()
@@ -455,7 +448,7 @@ function Debug.HandleSlashCommand(args)
     end
 
     if feature == "controls" or feature == "control" then
-        Debug.LogControlShown()
+        Debug.EnableControlShownLogging()
         return
     end
 
@@ -489,15 +482,9 @@ function Debug.HandleSlashCommand(args)
     end
 end
 
+-- Module Registration
 SLASH_COMMANDS["/lpd"] = function(args)
     Debug.HandleSlashCommand(args)
 end
 
------------------------------------------------------------
--- Register in global namespace
------------------------------------------------------------
-
-LibPanicida = LibPanicida or {}
 LibPanicida.Debug = Debug
-
-return Debug

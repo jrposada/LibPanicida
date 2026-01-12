@@ -6,7 +6,7 @@ VERSION=${1:-"0.0.0"}
 ADDON_NAME="LibPanicida"
 DIST_DIR="./dist"
 TEMP_DIR="${DIST_DIR}/tmp/${ADDON_NAME}"
-OUTPUT_ZIP="${DIST_DIR}${ADDON_NAME}_${VERSION}.zip"
+OUTPUT_ZIP="${DIST_DIR}/${ADDON_NAME}_${VERSION}.zip"
 
 FILES_TO_COPY=(
     "${ADDON_NAME}.addon"
@@ -17,13 +17,10 @@ FILES_TO_COPY=(
 echo "Creating temporary directory: ${TEMP_DIR}"
 mkdir -p "${TEMP_DIR}"
 
-if [ -f "$ADDON_FILE" ]; then
-    echo "Updating version to ${VERSION} in ${ADDON_FILE}"
-    sed -i.bak "s/^## Version:.*$/## Version: ${VERSION}/" "$ADDON_FILE"
-    rm -f "${ADDON_FILE}.bak"  # Remove backup file
-else
-    echo "Warning: ${ADDON_FILE} not found, skipping version update"
-fi
+ADDON_FILE="${ADDON_NAME}.addon"
+echo "Updating version to ${VERSION} in ${ADDON_FILE}"
+sed -i.bak "s/^## Version:.*$/## Version: ${VERSION}/" "$ADDON_FILE"
+rm -f "${ADDON_FILE}.bak"  # Remove backup file
 
 echo "Copying files..."
 shopt -s globstar nullglob
@@ -55,7 +52,6 @@ shopt -u globstar nullglob
 # Create zip archive
 echo "Creating zip archive: ${OUTPUT_ZIP}"
 zip -r "${OUTPUT_ZIP}" "${TEMP_DIR}"
-cd - > /dev/null
 
 echo "Archive created successfully: ${DIST_DIR}/${OUTPUT_ZIP}"
 

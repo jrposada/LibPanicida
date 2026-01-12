@@ -6,7 +6,7 @@ VERSION=${1:-"0.0.0"}
 ADDON_NAME="LibPanicida"
 DIST_DIR="./dist"
 TEMP_DIR="${DIST_DIR}/tmp/${ADDON_NAME}"
-OUTPUT_ZIP="${DIST_DIR}/${ADDON_NAME}_${VERSION}.zip"
+OUTPUT_ZIP="${ADDON_NAME}_${VERSION}.zip"
 
 FILES_TO_COPY=(
     "${ADDON_NAME}.addon"
@@ -51,7 +51,8 @@ shopt -u globstar nullglob
 
 # Create zip archive
 echo "Creating zip archive: ${OUTPUT_ZIP}"
-zip -r "${OUTPUT_ZIP}" "${TEMP_DIR}"
+cd "${DIST_DIR}/tmp"
+zip -r "${OUTPUT_ZIP}" "${ADDON_NAME}"
 
 echo "Archive created successfully: ${DIST_DIR}/${OUTPUT_ZIP}"
 

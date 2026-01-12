@@ -5,7 +5,7 @@ set -e
 VERSION=${1:-"0.0.0"}
 ADDON_NAME="LibPanicida"
 DIST_DIR="./dist"
-TEMP_DIR="${DIST_DIR}/tmp/${ADDON_NAME}"
+BUILD_DIR="${DIST_DIR}/${ADDON_NAME}"
 OUTPUT_ZIP="${ADDON_NAME}_${VERSION}.zip"
 
 FILES_TO_COPY=(
@@ -14,8 +14,8 @@ FILES_TO_COPY=(
     "src/**/*"
 )
 
-echo "Creating temporary directory: ${TEMP_DIR}"
-mkdir -p "${TEMP_DIR}"
+echo "Creating temporary directory: ${BUILD_DIR}"
+mkdir -p "${BUILD_DIR}"
 
 ADDON_FILE="${ADDON_NAME}.addon"
 echo "Updating version to ${VERSION} in ${ADDON_FILE}"
@@ -37,10 +37,10 @@ for pattern in "${FILES_TO_COPY[@]}"; do
         if [ -f "$file" ]; then
             file_dir=$(dirname "$file")
 
-            mkdir -p "${TEMP_DIR}/${file_dir}"
+            mkdir -p "${BUILD_DIR}/${file_dir}"
 
             echo "  Copying: $file"
-            cp "$file" "${TEMP_DIR}/${file}"
+            cp "$file" "${BUILD_DIR}/${file}"
         elif [ -d "$file" ]; then
             echo "  Skipping directory: $file"
         fi
@@ -51,7 +51,7 @@ shopt -u globstar nullglob
 
 # Create zip archive
 echo "Creating zip archive: ${OUTPUT_ZIP}"
-cd "${DIST_DIR}/tmp"
+cd "${DIST_DIR}"
 zip -r "${OUTPUT_ZIP}" "${ADDON_NAME}"
 
 echo "Archive created successfully: ${DIST_DIR}/${OUTPUT_ZIP}"

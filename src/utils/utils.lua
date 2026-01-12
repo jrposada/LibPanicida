@@ -31,58 +31,58 @@ local Utils = {}
 --- @param func function Function to execute
 --- @param ... any Optional arguments to pass to func
 function Utils.CallLater(name, ms, func, ...)
-    local eventName = "LibPanicida_CallLater_" .. name
+  local eventName = "LibPanicida_CallLater_" .. name
 
-    if ms then
-        -- Store args for closure
-        local args = { ... }
+  if ms then
+    -- Store args for closure
+    local args = { ... }
 
-        EM:RegisterForUpdate(eventName, ms, function()
-            EM:UnregisterForUpdate(eventName)
-            func(unpack(args))
-        end)
-    else
-        -- Cancel if ms is nil
-        EM:UnregisterForUpdate(eventName)
-    end
+    EM:RegisterForUpdate(eventName, ms, function()
+      EM:UnregisterForUpdate(eventName)
+      func(unpack(args))
+    end)
+  else
+    -- Cancel if ms is nil
+    EM:UnregisterForUpdate(eventName)
+  end
 end
 
 --- Parse timestamp into days, hours, minutes, seconds.
 --- @param timeStamp number Timestamp in seconds
 --- @return string Formatted string "D HH:MM:SS"
 function Utils.ParseTimeStamp(timeStamp)
-    local seconds = timeStamp
+  local seconds = timeStamp
 
-    local days = math_floor(seconds / SECONDS_PER_DAY)
-    seconds = seconds - (days * SECONDS_PER_DAY)
+  local days = math_floor(seconds / SECONDS_PER_DAY)
+  seconds = seconds - (days * SECONDS_PER_DAY)
 
-    local hours = math_floor(seconds / SECONDS_PER_HOUR)
-    seconds = seconds - (hours * SECONDS_PER_HOUR)
+  local hours = math_floor(seconds / SECONDS_PER_HOUR)
+  seconds = seconds - (hours * SECONDS_PER_HOUR)
 
-    local mins = math_floor(seconds / SECONDS_PER_MINUTE)
-    seconds = seconds - (mins * SECONDS_PER_MINUTE)
+  local mins = math_floor(seconds / SECONDS_PER_MINUTE)
+  seconds = seconds - (mins * SECONDS_PER_MINUTE)
 
-    return string_format("%01d %02d:%02d:%02d", days, hours, mins, seconds)
+  return string_format("%01d %02d:%02d:%02d", days, hours, mins, seconds)
 end
 
 --- Get the base reset timestamp for the current server.
 --- @return number Base reset timestamp for EU or NA server
 function Utils.GetDailyResetBase()
-    return (GetWorldName() == "EU Megaserver")
-        and DAILY_RESET_BASE_EU
-        or DAILY_RESET_BASE_NA
+  return (GetWorldName() == "EU Megaserver")
+      and DAILY_RESET_BASE_EU
+      or DAILY_RESET_BASE_NA
 end
 
 --- Get the current daily reset day number.
 --- @param timestamp number|nil Optional timestamp (defaults to current time)
 --- @return number Day number since base reset timestamp
 function Utils.GetDailyResetDay(timestamp)
-    timestamp = timestamp or GetTimeStamp()
+  timestamp = timestamp or GetTimeStamp()
 
-    local baseResetTimestamp = Utils.GetDailyResetBase()
+  local baseResetTimestamp = Utils.GetDailyResetBase()
 
-    local secondsSinceBase = GetDiffBetweenTimeStamps(timestamp, baseResetTimestamp)
-    return math_floor(secondsSinceBase / SECONDS_PER_DAY)
+  local secondsSinceBase = GetDiffBetweenTimeStamps(timestamp, baseResetTimestamp)
+  return math_floor(secondsSinceBase / SECONDS_PER_DAY)
 end
 
 -----------------------------------------------------------
@@ -95,20 +95,20 @@ end
 --- @return table Array of substrings
 --- @return number Count of substrings
 function Utils.Split(text, delimiter)
-    if not text or not delimiter then return {}, 0 end
+  if not text or not delimiter then return {}, 0 end
 
-    local result = {}
-    local count = 0
+  local result = {}
+  local count = 0
 
-    -- Add delimiter to end for pattern matching
-    for match in string_gmatch(text .. delimiter, "(.-)" .. delimiter) do
-        if match ~= "" then
-            tinsert(result, match)
-            count = count + 1
-        end
+  -- Add delimiter to end for pattern matching
+  for match in string_gmatch(text .. delimiter, "(.-)" .. delimiter) do
+    if match ~= "" then
+      tinsert(result, match)
+      count = count + 1
     end
+  end
 
-    return result, count
+  return result, count
 end
 
 --- Clean pledge quest name by removing category prefix.
@@ -116,8 +116,8 @@ end
 --- @param name string Full quest name
 --- @return string Cleaned quest name
 function Utils.CleanPledgeQuestName(name)
-    if not name then return "" end
-    return string_gsub(name, ".*:%s*", "")
+  if not name then return "" end
+  return string_gsub(name, ".*:%s*", "")
 end
 
 -----------------------------------------------------------
@@ -129,8 +129,8 @@ end
 --- @param key any Key to find
 --- @return boolean True if key exists, false otherwise
 function Utils.TableContainsKey(tbl, key)
-    if not tbl then return false end
-    return tbl[key] ~= nil
+  if not tbl then return false end
+  return tbl[key] ~= nil
 end
 
 --- Check if table contains a specific value.
@@ -138,15 +138,15 @@ end
 --- @param value any Value to find
 --- @return boolean True if value exists, false otherwise
 function Utils.TableContainsValue(tbl, value)
-    if not tbl then return false end
+  if not tbl then return false end
 
-    for _, tableValue in pairs(tbl) do
-        if tableValue == value then
-            return true
-        end
+  for _, tableValue in pairs(tbl) do
+    if tableValue == value then
+      return true
     end
+  end
 
-    return false
+  return false
 end
 
 LibPanicida.Utils = Utils

@@ -1,1 +1,3 @@
-TODO
+# LibPanicida
+
+Utilities for Panicida addons

@@ -2,6 +2,7 @@
 ## Description: Common utilities for my addons.
 ## Author: Panicida
 ## Version: semantic-release
+## AddOnVersion: semantic-release
 ## APIVersion: 101048
 ## IsLibrary: true
 

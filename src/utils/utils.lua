@@ -47,24 +47,6 @@ function Utils.CallLater(name, ms, func, ...)
   end
 end
 
---- Parse timestamp into days, hours, minutes, seconds.
---- @param timeStamp number Timestamp in seconds
---- @return string Formatted string "D HH:MM:SS"
-function Utils.ParseTimeStamp(timeStamp)
-  local seconds = timeStamp
-
-  local days = math_floor(seconds / SECONDS_PER_DAY)
-  seconds = seconds - (days * SECONDS_PER_DAY)
-
-  local hours = math_floor(seconds / SECONDS_PER_HOUR)
-  seconds = seconds - (hours * SECONDS_PER_HOUR)
-
-  local mins = math_floor(seconds / SECONDS_PER_MINUTE)
-  seconds = seconds - (mins * SECONDS_PER_MINUTE)
-
-  return string_format("%01d %02d:%02d:%02d", days, hours, mins, seconds)
-end
-
 --- Get the base reset timestamp for the current server.
 --- @return number Base reset timestamp for EU or NA server
 function Utils.GetDailyResetBase()

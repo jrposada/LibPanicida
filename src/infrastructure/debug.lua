@@ -6,7 +6,6 @@ local GetTimeStamp = GetTimeStamp
 local Achievement = Achievement
 local GetNumFastTravelNodes = GetNumFastTravelNodes
 local GetFastTravelNodeInfo = GetFastTravelNodeInfo
-local GetAchievementInfo = GetAchievementInfo
 local ZO_PreHookHandler = ZO_PreHookHandler
 local ZO_PostHook = ZO_PostHook
 local ZO_ItemSetsBook_Shared = ZO_ItemSetsBook_Shared
@@ -25,9 +24,6 @@ local debugStates = {
   setIdLogging = false,
   achievementLogging = false,
 }
-
--- Store original functions for restoration
-local originalAchievementToggle = nil
 
 -- Module Declaration
 local Debug = {}
@@ -243,7 +239,7 @@ function Debug.DisableSetIdLogging()
   return true
 end
 
---- Enables achievement ID logging when clicking achievements.
+--- Enables achievement ID display in achievement titles.
 --- @return boolean True if enabled, false if already enabled or not available
 function Debug.EnableAchievementIdLogging()
   if debugStates.achievementLogging then
@@ -251,46 +247,32 @@ function Debug.EnableAchievementIdLogging()
     return false
   end
 
-  if not Achievement or not Achievement.ToggleCollapse then
-    Debug.LogLater("Error: Achievement.ToggleCollapse not found")
-    return false
-  end
+  Debug.LogLater("Achievement ID logging enabled")
 
-  Debug.LogLater("Achievement ID logging enabled - click achievements to log")
+  ZO_PostHook(Achievement, "Show", function(self, achievementId)
+    if not debugStates.achievementLogging then return end
+    if not achievementId or not self.title then return end
 
-  -- Store original if not already stored
-  if not originalAchievementToggle then
-    originalAchievementToggle = Achievement.ToggleCollapse
-  end
-
-  Achievement.ToggleCollapse = function(self, button)
-    originalAchievementToggle(self, button)
-
-    if self.achievementId then
-      local name = GetAchievementInfo(self.achievementId)
-      Debug.LogLater(string_format("%s = %d", name or "Unknown",
-        self.achievementId))
+    local currentText = self.title:GetText()
+    if currentText then
+      self.title:SetText(string_format("%s (ID: %d)", currentText, achievementId))
     end
-  end
+  end)
 
   debugStates.achievementLogging = true
   return true
 end
 
---- Disables achievement ID logging.
---- @return boolean True if disabled, false if already disabled
+--- Disables achievement ID display (requires UI reload).
+--- @return boolean Always returns true
 function Debug.DisableAchievementIdLogging()
   if not debugStates.achievementLogging then
     Debug.LogLater("Achievement ID logging already disabled")
     return false
   end
 
-  if originalAchievementToggle and Achievement then
-    Achievement.ToggleCollapse = originalAchievementToggle
-  end
-
-  debugStates.achievementLogging = false
-  Debug.LogLater("Achievement ID logging disabled")
+  Debug.LogLater(
+    "Achievement ID logging can not be disabled. Reload UI instead.")
   return true
 end
 

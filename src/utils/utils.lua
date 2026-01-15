@@ -11,8 +11,6 @@ local pairs = pairs
 
 -- Constants
 local SECONDS_PER_DAY = 86400
-local SECONDS_PER_HOUR = 3600
-local SECONDS_PER_MINUTE = 60
 
 -- Daily reset timestamps (updated for Update 8.3.5)
 -- https://forums.elderscrollsonline.com/en/discussion/629071/pc-mac-patch-notes-v8-3-5

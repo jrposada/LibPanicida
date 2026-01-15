@@ -3,7 +3,6 @@ local GetTimeStamp = GetTimeStamp
 local GetWorldName = GetWorldName
 local GetDiffBetweenTimeStamps = GetDiffBetweenTimeStamps
 local math_floor = math.floor
-local string_format = string.format
 local string_gmatch = string.gmatch
 local string_gsub = string.gsub
 local tinsert = table.insert

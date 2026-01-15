@@ -28,9 +28,9 @@ local Controls = {}
 --- @param anchor table The anchor array to validate
 --- @return boolean True if anchor has 4 or 5 elements
 local function ValidateAnchor(anchor)
-    if not anchor then return false end
-    local len = #anchor
-    return len == 4 or len == 5
+  if not anchor then return false end
+  local len = #anchor
+  return len == 4 or len == 5
 end
 
 -- Public Functions
@@ -39,22 +39,26 @@ end
 --- @param control any The control to add tooltip to
 --- @param tooltipLines table Array of tooltip text lines (nil to remove tooltip)
 function Controls.SetTooltip(control, tooltipLines)
-    if not tooltipLines or #tooltipLines == 0 then
-        control:SetHandler("OnMouseEnter", nil)
-        control:SetHandler("OnMouseExit", nil)
-        return
+  if not tooltipLines or #tooltipLines == 0 then
+    control:SetHandler("OnMouseEnter", nil)
+    control:SetHandler("OnMouseExit", nil)
+    return
+  end
+
+  control:SetHandler("OnMouseEnter", function(ctrl)
+    InitializeTooltip(InformationTooltip, ctrl, TOPRIGHT, -10, 0, TOPLEFT)
+    for _, lineText in ipairs(tooltipLines) do
+      InformationTooltip:AddLine(
+        lineText,
+        "",
+        ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB()
+      )
     end
+  end)
 
-    control:SetHandler("OnMouseEnter", function(ctrl)
-        InitializeTooltip(InformationTooltip, ctrl, TOPRIGHT, -10, 0, TOPLEFT)
-        for _, lineText in ipairs(tooltipLines) do
-            InformationTooltip:AddLine(lineText, "", ZO_TOOLTIP_DEFAULT_COLOR:UnpackRGB())
-        end
-    end)
-
-    control:SetHandler("OnMouseExit", function()
-        ClearTooltip(InformationTooltip)
-    end)
+  control:SetHandler("OnMouseExit", function()
+    ClearTooltip(InformationTooltip)
+  end)
 end
 
 --- Creates a Label control.
@@ -69,40 +73,42 @@ end
 --- @param hidden boolean Whether control starts hidden
 --- @param tooltipLines table Optional array of tooltip text lines
 --- @return any The created Label control
-function Controls.Label(name, parent, dims, anchor, font, color, align, text, hidden, tooltipLines)
-    if not name or name == "" then return nil end
-    if not ValidateAnchor(anchor) then return nil end
+function Controls.Label(name, parent, dims, anchor, font, color, align, text,
+                        hidden, tooltipLines)
+  if not name or name == "" then return nil end
+  if not ValidateAnchor(anchor) then return nil end
 
-    parent = parent or GuiRoot
-    font = font or "ZoFontGame"
-    color = (color and #color == 4) and color or { 1, 1, 1, 1 }
-    align = (align and #align == 2) and align or { 0, 0 }
-    hidden = hidden or false
+  parent = parent or GuiRoot
+  font = font or "ZoFontGame"
+  color = (color and #color == 4) and color or { 1, 1, 1, 1 }
+  align = (align and #align == 2) and align or { 0, 0 }
+  hidden = hidden or false
 
-    local label = WINDOW_MANAGER:GetControlByName(name) or WINDOW_MANAGER:CreateControl(name, parent, CT_LABEL)
+  local label = WINDOW_MANAGER:GetControlByName(name) or
+      WINDOW_MANAGER:CreateControl(name, parent, CT_LABEL)
 
-    if dims then
-        label:SetDimensions(dims[1], dims[2])
-    end
+  if dims then
+    label:SetDimensions(dims[1], dims[2])
+  end
 
-    label:ClearAnchors()
-    if #anchor == 5 then
-        label:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
-    else
-        label:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
-    end
+  label:ClearAnchors()
+  if #anchor == 5 then
+    label:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+  else
+    label:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+  end
 
-    label:SetFont(font)
-    label:SetColor(unpack(color))
-    label:SetHorizontalAlignment(align[1])
-    label:SetVerticalAlignment(align[2])
-    label:SetText(text)
-    label:SetHidden(hidden)
-    label:SetDrawTier(DT_HIGH)
+  label:SetFont(font)
+  label:SetColor(unpack(color))
+  label:SetHorizontalAlignment(align[1])
+  label:SetVerticalAlignment(align[2])
+  label:SetText(text)
+  label:SetHidden(hidden)
+  label:SetDrawTier(DT_HIGH)
 
-    Controls.SetTooltip(label, tooltipLines)
+  Controls.SetTooltip(label, tooltipLines)
 
-    return label
+  return label
 end
 
 --- Creates a Button control.
@@ -116,37 +122,38 @@ end
 --- @param tooltipLines table Optional array of tooltip text lines
 --- @param hidden boolean Whether control starts hidden
 --- @return any The created Button control
-function Controls.Button(name, parent, dims, anchor, text, func, enabled, tooltipLines, hidden)
-    if not name or name == "" then return nil end
-    if not ValidateAnchor(anchor) then return nil end
+function Controls.Button(name, parent, dims, anchor, text, func, enabled,
+                         tooltipLines, hidden)
+  if not name or name == "" then return nil end
+  if not ValidateAnchor(anchor) then return nil end
 
-    hidden = hidden or false
+  hidden = hidden or false
 
-    local button = WINDOW_MANAGER:GetControlByName(name) or
-        WINDOW_MANAGER:CreateControlFromVirtual(name, parent, "Panicida_Button")
+  local button = WINDOW_MANAGER:GetControlByName(name) or
+      WINDOW_MANAGER:CreateControlFromVirtual(name, parent, "Panicida_Button")
 
-    if dims then
-        button:SetDimensions(dims[1], dims[2])
-    end
+  if dims then
+    button:SetDimensions(dims[1], dims[2])
+  end
 
-    button:SetText(text)
-    button:ClearAnchors()
+  button:SetText(text)
+  button:ClearAnchors()
 
-    if #anchor == 5 then
-        button:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
-    else
-        button:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
-    end
+  if #anchor == 5 then
+    button:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+  else
+    button:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+  end
 
-    button:SetClickSound("Click")
-    button:SetHandler("OnClicked", func)
-    button:SetState(enabled and BSTATE_NORMAL or BSTATE_DISABLED)
-    button:SetDrawTier(DT_HIGH)
-    button:SetHidden(hidden)
+  button:SetClickSound("Click")
+  button:SetHandler("OnClicked", func)
+  button:SetState(enabled and BSTATE_NORMAL or BSTATE_DISABLED)
+  button:SetDrawTier(DT_HIGH)
+  button:SetHidden(hidden)
 
-    Controls.SetTooltip(button, tooltipLines)
+  Controls.SetTooltip(button, tooltipLines)
 
-    return button
+  return button
 end
 
 --- Creates a Checkbox control (button with check icon).
@@ -160,38 +167,49 @@ end
 --- @param checked boolean Initial checked state
 --- @param hidden boolean Whether control starts hidden
 --- @return any The created Checkbox control with SetChecked method
-function Controls.Checkbox(name, parent, dims, anchor, text, func, enabled, checked, hidden)
-    if not name or name == "" then return nil end
-    if not ValidateAnchor(anchor) then return nil end
+function Controls.Checkbox(name, parent, dims, anchor, text, func, enabled,
+                           checked, hidden)
+  if not name or name == "" then return nil end
+  if not ValidateAnchor(anchor) then return nil end
 
-    local checkbox = Controls.Button(name, parent, dims, anchor, text, func, enabled, nil, hidden)
-    if not checkbox then return nil end
-    local label = Controls.Label(
-        name .. "_Label",
-        checkbox,
-        { dims[2], dims[2] },
-        { LEFT, checkbox, LEFT, 0, 0 },
-        nil, nil, { 0, 1 }
-    )
+  local checkbox = Controls.Button(
+    name,
+    parent,
+    dims,
+    anchor,
+    text,
+    func,
+    enabled,
+    nil,
+    hidden
+  )
+  if not checkbox then return nil end
+  local label = Controls.Label(
+    name .. "_Label",
+    checkbox,
+    { dims[2], dims[2] },
+    { LEFT, checkbox, LEFT, 0, 0 },
+    nil, nil, { 0, 1 }
+  )
 
-    local function SetChecked(check)
-        local iconPath = check and
-            "/esoui/art/cadwell/checkboxicon_checked.dds" or
-            "/esoui/art/cadwell/checkboxicon_unchecked.dds"
-        local iconText = string_format("|t%d:%d:%s|t", dims[2], dims[2], iconPath)
+  local function SetChecked(check)
+    local iconPath = check and
+        "/esoui/art/cadwell/checkboxicon_checked.dds" or
+        "/esoui/art/cadwell/checkboxicon_unchecked.dds"
+    local iconText = string_format("|t%d:%d:%s|t", dims[2], dims[2], iconPath)
 
-        if label then
-            label:SetText(iconText)
-        end
+    if label then
+      label:SetText(iconText)
     end
+  end
 
-    checkbox:SetNormalTexture("")
-    checkbox:SetDisabledTexture("")
-    checkbox.SetChecked = SetChecked
+  checkbox:SetNormalTexture("")
+  checkbox:SetDisabledTexture("")
+  checkbox.SetChecked = SetChecked
 
-    SetChecked(checked)
+  SetChecked(checked)
 
-    return checkbox
+  return checkbox
 end
 
 --- Creates a Texture control.
@@ -202,29 +220,30 @@ end
 --- @param texture string Path to texture file (optional, can be set later)
 --- @return any The created Texture control
 function Controls.Texture(name, parent, dims, anchor, texture)
-    if not name or name == "" then return nil end
-    if not ValidateAnchor(anchor) then return nil end
+  if not name or name == "" then return nil end
+  if not ValidateAnchor(anchor) then return nil end
 
-    parent = parent or GuiRoot
+  parent = parent or GuiRoot
 
-    local control = WINDOW_MANAGER:GetControlByName(name) or WINDOW_MANAGER:CreateControl(name, parent, CT_TEXTURE)
+  local control = WINDOW_MANAGER:GetControlByName(name) or
+      WINDOW_MANAGER:CreateControl(name, parent, CT_TEXTURE)
 
-    if dims then
-        control:SetDimensions(dims[1], dims[2])
-    end
+  if dims then
+    control:SetDimensions(dims[1], dims[2])
+  end
 
-    control:ClearAnchors()
-    if #anchor == 5 then
-        control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
-    else
-        control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
-    end
+  control:ClearAnchors()
+  if #anchor == 5 then
+    control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+  else
+    control:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+  end
 
-    if texture then
-        control:SetTexture(texture)
-    end
+  if texture then
+    control:SetTexture(texture)
+  end
 
-    return control
+  return control
 end
 
 --- Creates a MultiIcon control for displaying multiple status icons.
@@ -235,30 +254,30 @@ end
 --- @param tooltipLines table Optional array of tooltip text lines
 --- @return any The created MultiIcon control
 function Controls.MultiIcon(name, parent, dims, anchor, tooltipLines)
-    if not name or name == "" then return nil end
-    if not ValidateAnchor(anchor) then return nil end
+  if not name or name == "" then return nil end
+  if not ValidateAnchor(anchor) then return nil end
 
-    parent = parent or GuiRoot
+  parent = parent or GuiRoot
 
-    local multiIcon = WINDOW_MANAGER:GetControlByName(name) or
-        WINDOW_MANAGER:CreateControlFromVirtual(name, parent, "ZO_MultiIcon")
+  local multiIcon = WINDOW_MANAGER:GetControlByName(name) or
+      WINDOW_MANAGER:CreateControlFromVirtual(name, parent, "ZO_MultiIcon")
 
-    if dims then
-        multiIcon:SetDimensions(dims[1], dims[2])
-    end
+  if dims then
+    multiIcon:SetDimensions(dims[1], dims[2])
+  end
 
-    multiIcon:ClearAnchors()
-    if #anchor == 5 then
-        multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
-    else
-        multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
-    end
+  multiIcon:ClearAnchors()
+  if #anchor == 5 then
+    multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4], anchor[5])
+  else
+    multiIcon:SetAnchor(anchor[1], anchor[2], anchor[3], anchor[4])
+  end
 
-    multiIcon:SetMouseEnabled(true)
+  multiIcon:SetMouseEnabled(true)
 
-    Controls.SetTooltip(multiIcon, tooltipLines)
+  Controls.SetTooltip(multiIcon, tooltipLines)
 
-    return multiIcon
+  return multiIcon
 end
 
 -- Module Registration
